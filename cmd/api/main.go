@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/marcosstupnicki/go-logger/logger"
+	gologger "github.com/marcosstupnicki/go-logger/pkg"
 	"github.com/marcosstupnicki/go-users/cmd/api/handlers"
-	webapplication "github.com/marcosstupnicki/go-webapplication/pkg"
+	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"os"
 )
 
@@ -14,7 +14,7 @@ const (
 )
 
 func main()  {
-	app, err := webapplication.NewWebApplication("local", logger.DebugLevel)
+	app, err := gowebapp.NewWebApplication("local", gologger.DebugLevel)
 	if err != nil {
 		app.Logger.Error(fmt.Sprintln("error creating webapplication.", err))
 		os.Exit(ExitCodeFailToCreateWebApplication)
@@ -31,7 +31,7 @@ func main()  {
 }
 
 
-func initRoutes(app *webapplication.WebApplication){
+func initRoutes(app *gowebapp.WebApplication){
 	userHandler := handlers.NewUserHandler()
 
 	userGroup := app.Group("/users")

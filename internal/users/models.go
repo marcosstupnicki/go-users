@@ -1,21 +1,21 @@
 package users
 
 type UserRequest struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UserResponse struct {
 	ID        int    `json:"id"`
 	Email     string `json:"email"`
-	CreatedAt int    `json:"created_at"`
-	UpdatedAt int    `json:"updated_at"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
 
 type User struct {
-	Id        int
+	Id        int `gorm:"primaryKey,unique"`
 	Email     string
 	Password  string
-	CreatedAt int
-	UpdatedAt int
+	CreatedAt int64 `gorm:"autoCreateTime"`
+	UpdatedAt int64 `gorm:"autoCreateTime"`
 }

@@ -1,28 +1,40 @@
 package users
 
-type UserService struct {
-
+type Service struct {
+	repository Repository
 }
 
-func (s UserService) Create(userRequest UserRequest) (User, error) {
-	return User{
-		Id: 12,
-		Email: "algun@email.com",
-	}, nil
+func (s Service) Create(userRequest UserRequest) (User, error) {
+	user := buildUserFromUserRequest(userRequest)
+
+	user, err := s.repository.Create(user)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
 }
 
-func (s UserService) Get(id int) (User, error) {
+func (s Service) Get(id int) (User, error) {
 	return User{
+		Id:    id,
 		Email: "algunotro@email.com",
 	}, nil
 }
 
-func (s UserService) Update(id int, userRequest UserRequest) (User, error) {
+func (s Service) Update(id int, userRequest UserRequest) (User, error) {
 	return User{
 		Email: "algun@email.com",
 	}, nil
 }
 
-func (s UserService) Delete(id int) error {
+func (s Service) Delete(id int) error {
 	return nil
+}
+
+func buildUserFromUserRequest(user UserRequest) User {
+	return User {
+		Email:    user.Email,
+		Password: user.Password,
+	}
 }
