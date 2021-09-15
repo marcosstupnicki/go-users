@@ -4,6 +4,12 @@ type Service struct {
 	repository Repository
 }
 
+func NewService(repository Repository) Service {
+	return Service{
+		repository: repository,
+	}
+}
+
 func (s Service) Create(userRequest UserRequest) (User, error) {
 	user := buildUserFromUserRequest(userRequest)
 
@@ -16,19 +22,41 @@ func (s Service) Create(userRequest UserRequest) (User, error) {
 }
 
 func (s Service) Get(id int) (User, error) {
-	return User{
-		Id:    id,
-		Email: "algunotro@email.com",
-	}, nil
+	user, err := s.repository.Get(id)
+	if err != nil {
+		if err == ErrRecordNotFound {
+			return User{}, ErrRecordNotFound
+		}
+		return User{}, err
+	}
+
+	return user, nil
 }
 
 func (s Service) Update(id int, userRequest UserRequest) (User, error) {
-	return User{
-		Email: "algun@email.com",
-	}, nil
+	user := buildUserFromUserRequest(userRequest)
+	user.ID = id
+
+	user, err := s.repository.Update(id, user)
+	if err != nil {
+		if err == ErrRecordNotFound {
+			return User{}, ErrRecordNotFound
+		}
+		return User{}, err
+	}
+
+	return user, nil
 }
 
 func (s Service) Delete(id int) error {
+	err := s.repository.Delete(id)
+	if err != nil {
+		if err == ErrRecordNotFound {
+			return ErrRecordNotFound
+		}
+		return err
+	}
+
 	return nil
 }
 
