@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/go-chi/chi"
 	"github.com/marcosstupnicki/go-users/internal/users"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"net/http"
@@ -51,7 +50,7 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
+	idParam := gowebapp.URLParam(r, "id")
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -76,7 +75,7 @@ func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
+	idParam := gowebapp.URLParam(r, "id")
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -108,7 +107,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
+	idParam := gowebapp.URLParam(r, "id")
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {

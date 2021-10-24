@@ -1,7 +1,35 @@
 # go-users
 
+go-users is an api that implements the [go-webapp](https://github.com/marcosstupnicki/go-webapp) library. This is a basic CRUD example for handling users.
 
-## Api Operations
+## Running
+
+This example uses a mysql database. To generate this db, this api has a Docker recipe (docker-compose.yml), you can execute it:
+
+```bash
+$ docker-compose up
+```
+
+After creating the container, we need to migrate the user table:
+```bash
+$ go run cmd/tools/migrate/main.go
+```
+
+Finally, we run the app:
+```bash
+$ go run cmd/api/main.go
+```
+
+You can validate the operation of the application by pinging the app:
+```
+curl --location --request GET 'http://localhost:8080/ping'
+```
+Response:
+```
+pong
+```
+
+## Operations
 
 ### Create User
 Request:
