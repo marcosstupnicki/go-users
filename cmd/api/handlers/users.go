@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"github.com/marcosstupnicki/go-users/internal/users"
+	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"net/http"
 	"strconv"
 )
 
 const (
-	_ErrorMessageInvalidIDParam      = "invalid param ID. ID must be an integer."
+	_ErrorMessageInvalidIDParam      = "invalid param ID. ID must be a integer."
 	_ErrorMessageCouldNotDecodeInput = "could not decode value from input"
 )
 
@@ -34,18 +35,18 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var userRequest users.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userRequest)
 	if err != nil {
-		respondWithError(w, 400, _ErrorMessageCouldNotDecodeInput)
+		gowebapp.RespondWithError(w, http.StatusBadRequest, _ErrorMessageCouldNotDecodeInput)
 		return
 	}
 
 	user, err := h.Service.Create(userRequest)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
 	userResponse := buildUserResponseFromUser(user)
-	respondwithJSON(w, 201, userResponse)
+	gowebapp.RespondWithJSON(w, http.StatusCreated, userResponse)
 	return
 }
 
@@ -54,23 +55,23 @@ func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, _ErrorMessageInvalidIDParam)
+		gowebapp.RespondWithError(w, http.StatusBadRequest, _ErrorMessageInvalidIDParam)
 		return
 	}
 
 	user, err := h.Service.Get(id)
 	if err != nil {
 		if err == users.ErrRecordNotFound {
-			respondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
 			return
 		}
-		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
 	userResponse := buildUserResponseFromUser(user)
 
-	respondwithJSON(w, 200, userResponse)
+	gowebapp.RespondWithJSON(w, http.StatusCreated, userResponse)
 	return
 }
 
@@ -79,30 +80,30 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, _ErrorMessageInvalidIDParam)
+		gowebapp.RespondWithError(w, http.StatusBadRequest, _ErrorMessageInvalidIDParam)
 		return
 	}
 
 	var userRequest users.UserRequest
 	err = json.NewDecoder(r.Body).Decode(&userRequest)
 	if err != nil {
-		respondWithError(w, 400, _ErrorMessageCouldNotDecodeInput)
+		gowebapp.RespondWithError(w, 400, _ErrorMessageCouldNotDecodeInput)
 		return
 	}
 
 	user, err := h.Service.Update(id, userRequest)
 	if err != nil {
 		if err == users.ErrRecordNotFound {
-			respondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
 			return
 		}
-		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
 	userResponse := buildUserResponseFromUser(user)
 
-	respondwithJSON(w, 200, userResponse)
+	gowebapp.RespondWithJSON(w, http.StatusOK, userResponse)
 	return
 }
 
@@ -118,14 +119,14 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	err = h.Service.Delete(id)
 	if err != nil {
 		if err == users.ErrRecordNotFound {
-			http.Error(w, http.StatusText(404), http.StatusNotFound)
+			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
 			return
 		}
-		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
-	respondwithJSON(w, 200, nil)
+	gowebapp.RespondWithJSON(w, http.StatusNoContent, nil)
 	return
 }
 
@@ -136,17 +137,4 @@ func buildUserResponseFromUser(user users.User) users.UserResponse {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
-}
-
-// respondwithJSON write json response format
-func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
-}
-
-// respondWithError return error message
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondwithJSON(w, code, map[string]string{"message": msg})
 }

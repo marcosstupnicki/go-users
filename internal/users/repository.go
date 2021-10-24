@@ -43,7 +43,7 @@ func (repository Repository) Get(id int) (User, error) {
 	return user, nil
 }
 
-func (repository Repository) Update(id int, user User) (User, error) {
+func (repository Repository) Update(user User) (User, error) {
 	tx := repository.DB.Model(&user).Updates(user)
 	if tx.RowsAffected == 0 {
 		return User{}, ErrRecordNotFound

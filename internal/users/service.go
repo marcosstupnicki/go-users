@@ -37,7 +37,7 @@ func (s Service) Update(id int, userRequest UserRequest) (User, error) {
 	user := buildUserFromUserRequest(userRequest)
 	user.ID = id
 
-	user, err := s.repository.Update(id, user)
+	user, err := s.repository.Update(user)
 	if err != nil {
 		if err == ErrRecordNotFound {
 			return User{}, ErrRecordNotFound
