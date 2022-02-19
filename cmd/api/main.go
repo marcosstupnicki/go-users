@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/marcosstupnicki/go-users/cmd/api/handlers"
-	"github.com/marcosstupnicki/go-users/internal/db"
+	"github.com/marcosstupnicki/go-users/internal/config"
 	"github.com/marcosstupnicki/go-users/internal/users"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 
@@ -13,24 +13,25 @@ import (
 const (
 	ExitCodeFailToCreateWebApplication = iota
 	ExitCodeFailToRunWebApplication
-	ExitCodeFailConnectToDB
+	ExitCodeFailReadConfigs
+	ExitCodeFailCreateUserService
 )
 
 func main()  {
-	app, err := gowebapp.NewWebApplication("local")
+	app := gowebapp.NewWebApp("local")
+
+	cfg, err := config.GetConfigFromEnvironment(app.Scope)
 	if err != nil {
-		os.Exit(ExitCodeFailToCreateWebApplication)
+		fmt.Print(err)
+		os.Exit(ExitCodeFailReadConfigs)
 	}
 
-	db, err := db.InitDb()
+	service, err := users.NewService(cfg.Database)
 	if err != nil {
-		os.Exit(ExitCodeFailConnectToDB)
+		os.Exit(ExitCodeFailCreateUserService)
 	}
 
-	repository := users.Repository{DB: db}
-	service := users.NewService(repository)
-
-	err = initRoutes(app, service)
+	initRoutes(app, service)
 	if err != nil {
 		os.Exit(ExitCodeFailToCreateWebApplication)
 	}
@@ -42,7 +43,7 @@ func main()  {
 	}
 }
 
-func initRoutes(app *gowebapp.WebApplication, service users.Service) error {
+func initRoutes(app *gowebapp.WebApp, service users.Service) {
 	userHandler := handlers.NewHandler(service)
 
 	userGroup := app.Group("/users")
@@ -50,7 +51,5 @@ func initRoutes(app *gowebapp.WebApplication, service users.Service) error {
 	userGroup.Get("/{id}", userHandler.Get)
 	userGroup.Put("/{id}", userHandler.Update)
 	userGroup.Delete("/{id}", userHandler.Delete)
-
-	return nil
 }
 

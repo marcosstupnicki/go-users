@@ -1,13 +1,20 @@
 package users
 
+import "github.com/marcosstupnicki/go-users/internal/config"
+
 type Service struct {
 	repository Repository
 }
 
-func NewService(repository Repository) Service {
+func NewService(cfg config.Database) (Service, error) {
+	repository, err := newRepository(cfg)
+	if err != nil {
+		return Service{}, err
+	}
+
 	return Service{
 		repository: repository,
-	}
+	}, nil
 }
 
 func (s Service) Create(userRequest UserRequest) (User, error) {
