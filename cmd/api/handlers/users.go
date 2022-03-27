@@ -11,12 +11,13 @@ import (
 const (
 	_ErrorMessageInvalidIDParam      = "invalid param ID. ID must be a integer."
 	_ErrorMessageCouldNotDecodeInput = "could not decode value from input"
+	_ErrorMessageUserNotFound        = "user not found"
 )
 
 type Service interface {
-	Create(user users.UserRequest) (users.User, error)
+	Create(user users.User) (users.User, error)
 	Get(id int) (users.User, error)
-	Update(id int, user users.UserRequest) (users.User, error)
+	Update(id int, user users.User) (users.User, error)
 	Delete(id int) error
 }
 
@@ -38,7 +39,9 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.Service.Create(userRequest)
+	user := buildUserFromUserRequest(userRequest)
+
+	user, err = h.Service.Create(user)
 	if err != nil {
 		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		return
@@ -90,10 +93,12 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.Service.Update(id, userRequest)
+	user := buildUserFromUserRequest(userRequest)
+
+	user, err = h.Service.Update(id, user)
 	if err != nil {
 		if err == users.ErrRecordNotFound {
-			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
 		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
@@ -118,7 +123,7 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	err = h.Service.Delete(id)
 	if err != nil {
 		if err == users.ErrRecordNotFound {
-			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
 		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
@@ -133,7 +138,12 @@ func buildUserResponseFromUser(user users.User) users.UserResponse {
 	return users.UserResponse{
 		ID:        user.ID,
 		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+	}
+}
+
+func buildUserFromUserRequest(user users.UserRequest) users.User {
+	return users.User {
+		Email:    user.Email,
+		Password: user.Password,
 	}
 }
