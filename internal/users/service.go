@@ -1,9 +1,14 @@
 package users
 
-import "github.com/marcosstupnicki/go-users/internal/config"
+import (
+	"github.com/marcosstupnicki/go-users/internal/config"
+	"golang.org/x/crypto/bcrypt"
+	"log"
+)
 
 type Service struct {
 	repository Repository
+
 }
 
 func NewService(cfg config.Database) (Service, error) {
@@ -17,10 +22,15 @@ func NewService(cfg config.Database) (Service, error) {
 	}, nil
 }
 
-func (s Service) Create(userRequest UserRequest) (User, error) {
-	user := buildUserFromUserRequest(userRequest)
+func (s Service) Create(user User) (User, error) {
+	// Generate and set the new user password.
+	hash, err := generatePassword(user.Password)
+	if err != nil {
+		return User{}, err
+	}
+	user.Password = hash
 
-	user, err := s.repository.Create(user)
+	user, err = s.repository.Create(user)
 	if err != nil {
 		return User{}, err
 	}
@@ -40,8 +50,16 @@ func (s Service) Get(id int) (User, error) {
 	return user, nil
 }
 
-func (s Service) Update(id int, userRequest UserRequest) (User, error) {
-	user := buildUserFromUserRequest(userRequest)
+func (s Service) Update(id int, user User) (User, error) {
+	// If needed, generate and set the new user password.
+	if user.Password != "" {
+		hash, err := generatePassword(user.Password)
+		if err != nil {
+			return User{}, err
+		}
+		user.Password = hash
+	}
+
 	user.ID = id
 
 	user, err := s.repository.Update(user)
@@ -67,9 +85,13 @@ func (s Service) Delete(id int) error {
 	return nil
 }
 
-func buildUserFromUserRequest(user UserRequest) User {
-	return User {
-		Email:    user.Email,
-		Password: user.Password,
+func generatePassword(plainPassword string) (string, error){
+	// Generate "hash" to store from user password.
+	hash, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+		return "", err
 	}
+
+	return string(hash), nil
 }
