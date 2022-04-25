@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/marcosstupnicki/go-users/internal/config"
-	"github.com/marcosstupnicki/go-users/internal/db"
+	"github.com/marcosstupnicki/go-users/internal/platform/config"
+	"github.com/marcosstupnicki/go-users/internal/platform/db"
 	"github.com/marcosstupnicki/go-users/internal/users"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"os"

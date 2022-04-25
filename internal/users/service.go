@@ -1,24 +1,18 @@
 package users
 
 import (
-	"github.com/marcosstupnicki/go-users/internal/config"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
+
 type Service struct {
 	repository Repository
-
 }
 
-func NewService(cfg config.Database) (Service, error) {
-	repository, err := newRepository(cfg)
-	if err != nil {
-		return Service{}, err
-	}
-
+func NewService(repository Repository) (Service, error) {
 	return Service{
-		repository: repository,
+		repository:      repository,
 	}, nil
 }
 
@@ -85,8 +79,8 @@ func (s Service) Delete(id int) error {
 	return nil
 }
 
-func generatePassword(plainPassword string) (string, error){
-	// Generate "hash" to store from user password.
+func generatePassword(plainPassword string) (string, error) {
+	// Generate "hash" to mysql from user password.
 	hash, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatal(err)

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/marcosstupnicki/go-users/cmd/api/handlers"
-	"github.com/marcosstupnicki/go-users/internal/config"
+	"github.com/marcosstupnicki/go-users/internal/platform/config"
 	"github.com/marcosstupnicki/go-users/internal/users"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 
@@ -26,7 +26,12 @@ func main()  {
 		os.Exit(ExitCodeFailReadConfigs)
 	}
 
-	service, err := users.NewService(cfg.Database)
+	repo, err := users.NewRepository(cfg.Database)
+	if err != nil {
+		os.Exit(ExitCodeFailCreateUserService)
+	}
+
+	service, err := users.NewService(repo)
 	if err != nil {
 		os.Exit(ExitCodeFailCreateUserService)
 	}

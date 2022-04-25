@@ -2,8 +2,8 @@ package users
 
 import (
 	"errors"
-	"github.com/marcosstupnicki/go-users/internal/config"
-	"github.com/marcosstupnicki/go-users/internal/db"
+	"github.com/marcosstupnicki/go-users/internal/platform/config"
+	"github.com/marcosstupnicki/go-users/internal/platform/db"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +16,7 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func newRepository(cfg config.Database) (Repository, error) {
+func NewRepository(cfg config.Database) (Repository, error) {
 	gdb, err := db.Connect(cfg)
 	if err != nil {
 		return Repository{}, err
