@@ -1,9 +1,10 @@
-package users
+package mysql
 
 import (
 	"errors"
 	"github.com/marcosstupnicki/go-users/internal/platform/config"
 	"github.com/marcosstupnicki/go-users/internal/platform/db"
+	"github.com/marcosstupnicki/go-users/internal/users"
 	"gorm.io/gorm"
 )
 
@@ -12,58 +13,58 @@ var (
 	ErrRecordNotFound = errors.New("record not found error")
 )
 
-type Repository struct {
+type MySQL struct {
 	DB *gorm.DB
 }
 
-func NewRepository(cfg config.Database) (Repository, error) {
+func NewMySQL(cfg config.Database) (MySQL, error) {
 	gdb, err := db.Connect(cfg)
 	if err != nil {
-		return Repository{}, err
+		return MySQL{}, err
 	}
 
-	return Repository{
+	return MySQL{
 		DB: gdb,
 	}, nil
 }
 
-func (repository Repository) Create(user User) (User, error) {
+func (repository MySQL) Create(user users.User) (users.User, error) {
 	tx := repository.DB.Create(&user)
 	if tx.Error != nil {
-		return User{}, tx.Error
+		return users.User{}, tx.Error
 	}
 
 	return user, nil
 }
 
-func (repository Repository) Get(id int) (User, error) {
-	user := User{ID: id}
+func (repository MySQL) Get(id int) (users.User, error) {
+	user := users.User{ID: id}
 	tx := repository.DB.First(&user)
 
 	if tx.RowsAffected == 0{
-		return User{}, ErrRecordNotFound
+		return users.User{}, ErrRecordNotFound
 	}
 	if tx.Error != nil {
-		return User{}, tx.Error
+		return users.User{}, tx.Error
 	}
 
 	return user, nil
 }
 
-func (repository Repository) Update(user User) (User, error) {
+func (repository MySQL) Update(user users.User) (users.User, error) {
 	tx := repository.DB.Model(&user).Updates(user)
 	if tx.RowsAffected == 0 {
-		return User{}, ErrRecordNotFound
+		return users.User{}, ErrRecordNotFound
 	}
 	if tx.Error != nil {
-		return User{}, tx.Error
+		return users.User{}, tx.Error
 	}
 
 	return user, nil
 }
 
-func (repository Repository) Delete(id int) error {
-	user := User{ID: id}
+func (repository MySQL) Delete(id int) error {
+	user := users.User{ID: id}
 
 	tx := repository.DB.Delete(&user)
 	if tx.RowsAffected == 0 {
@@ -72,6 +73,15 @@ func (repository Repository) Delete(id int) error {
 
 	if tx.Error != nil {
 		return tx.Error
+	}
+
+	return nil
+}
+
+func (repository MySQL) AutoMigrate() error {
+	err := repository.DB.AutoMigrate(&users.User{})
+	if err != nil {
+		return err
 	}
 
 	return nil
