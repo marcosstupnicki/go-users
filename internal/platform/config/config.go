@@ -20,10 +20,10 @@ var _configs = map[string]Config{
 }
 
 
-func GetConfigFromEnvironment(scope gowebapp.Scope) (Config, error) {
+func GetConfigFromScope(scope gowebapp.Scope) (Config, error) {
 	config, found := _configs[scope.Environment]
 	if !found  {
-		return Config{}, NewErrorConfig(errors.New("config not found"), "config not found for indicated scope")
+		return Config{}, errors.New( "config not found for indicated scope")
 	}
 
 	return config, nil

@@ -5,6 +5,7 @@ import (
 	"github.com/marcosstupnicki/go-users/cmd/api/handlers"
 	"github.com/marcosstupnicki/go-users/internal/platform/config"
 	"github.com/marcosstupnicki/go-users/internal/users"
+	"github.com/marcosstupnicki/go-users/internal/users/mysql"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 
 	"os"
@@ -20,21 +21,18 @@ const (
 func main()  {
 	app := gowebapp.NewWebApp("local")
 
-	cfg, err := config.GetConfigFromEnvironment(app.Scope)
+	cfg, err := config.GetConfigFromScope(app.Scope)
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(ExitCodeFailReadConfigs)
 	}
 
-	repo, err := users.NewRepository(cfg.Database)
+	repo, err := mysql.NewMySQL(cfg.Database)
 	if err != nil {
 		os.Exit(ExitCodeFailCreateUserService)
 	}
 
-	service, err := users.NewService(repo)
-	if err != nil {
-		os.Exit(ExitCodeFailCreateUserService)
-	}
+	service := users.NewService(repo)
 
 	initRoutes(app, service)
 	if err != nil {
