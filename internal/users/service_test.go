@@ -2,10 +2,10 @@ package users
 
 import (
 	"errors"
-	"github.com/marcosstupnicki/go-users/internal/users/mysql"
+	"testing"
+
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 type RepositoryMock struct {
@@ -116,10 +116,10 @@ func TestService_Get(t *testing.T) {
 			name: "Fail - User not found",
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Get", mock.Anything).Return(User{}, mysql.ErrRecordNotFound)
+				m.On("Get", mock.Anything).Return(User{}, ErrRecordNotFound)
 				return &m
 			}(),
-			expectedError: mysql.ErrRecordNotFound,
+			expectedError: ErrRecordNotFound,
 		},
 		{
 			name: "Fail - Internal error",
@@ -178,10 +178,10 @@ func TestService_Update(t *testing.T) {
 			id:   1,
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Update", mock.Anything).Return(User{}, mysql.ErrRecordNotFound)
+				m.On("Update", mock.Anything).Return(User{}, ErrRecordNotFound)
 				return &m
 			}(),
-			expectedError: mysql.ErrRecordNotFound,
+			expectedError: ErrRecordNotFound,
 		},
 		{
 			name: "Fail - Internal error",
@@ -229,10 +229,10 @@ func TestService_Delete(t *testing.T) {
 			name: "Fail - User not found",
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Delete", mock.Anything).Return(mysql.ErrRecordNotFound)
+				m.On("Delete", mock.Anything).Return(ErrRecordNotFound)
 				return &m
 			}(),
-			expectedError: mysql.ErrRecordNotFound,
+			expectedError: ErrRecordNotFound,
 		},
 		{
 			name: "Fail - Internal error",

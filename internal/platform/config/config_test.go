@@ -2,10 +2,11 @@ package config
 
 import (
 	"errors"
+	"testing"
+
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm/logger"
-	"testing"
 )
 
 func TestGetConfigFromEnvironment(t *testing.T) {
@@ -17,23 +18,23 @@ func TestGetConfigFromEnvironment(t *testing.T) {
 	}{
 		{
 			name: "Ok - GetConfigFromScope for local scope ",
-			scope:          gowebapp.Scope{
+			scope: gowebapp.Scope{
 				Environment: "local",
 			},
 			expectedConfig: Config{
 				Database: Database{
-					User: "root",
+					User:     "root",
 					Password: "root",
-					Host: "127.0.0.1",
-					Port: "3306",
-					Name: "users",
+					Host:     "127.0.0.1",
+					Port:     "3306",
+					Name:     "users",
 					LogLevel: logger.Info,
 				},
 			},
 		},
 		{
 			name: "Error - GetConfigFromScope for unrecognized scope ",
-			scope:          gowebapp.Scope{
+			scope: gowebapp.Scope{
 				Environment: "unrecognized",
 			},
 			expectedError: errors.New("config not found for indicated scope"),
