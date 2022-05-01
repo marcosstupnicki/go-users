@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/marcosstupnicki/go-users/cmd/api/handlers"
 	"github.com/marcosstupnicki/go-users/internal/platform/config"
 	"github.com/marcosstupnicki/go-users/internal/users"
-	"github.com/marcosstupnicki/go-users/internal/users/mysql"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 
 	"os"
@@ -18,7 +18,7 @@ const (
 	ExitCodeFailCreateUserService
 )
 
-func main()  {
+func main() {
 	app := gowebapp.NewWebApp("local")
 
 	cfg, err := config.GetConfigFromScope(app.Scope)
@@ -27,7 +27,7 @@ func main()  {
 		os.Exit(ExitCodeFailReadConfigs)
 	}
 
-	repo, err := mysql.NewMySQL(cfg.Database)
+	repo, err := users.NewMySQL(cfg.Database)
 	if err != nil {
 		os.Exit(ExitCodeFailCreateUserService)
 	}
@@ -50,9 +50,8 @@ func initRoutes(app *gowebapp.WebApp, service users.Service) {
 	userHandler := handlers.NewHandler(service)
 
 	userGroup := app.Group("/users")
-	userGroup.Post("/",  userHandler.Create)
+	userGroup.Post("/", userHandler.Create)
 	userGroup.Get("/{id}", userHandler.Get)
 	userGroup.Put("/{id}", userHandler.Update)
 	userGroup.Delete("/{id}", userHandler.Delete)
 }
-

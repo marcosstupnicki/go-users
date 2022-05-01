@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/marcosstupnicki/go-users/internal/platform/config"
 	"github.com/marcosstupnicki/go-users/internal/users"
 	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
-	"os"
 )
 
 const (
@@ -15,7 +16,7 @@ const (
 
 func main() {
 	cfg, err := config.GetConfigFromScope(gowebapp.Scope{Environment: "local"})
-	repo, err := users.NewRepository(cfg.Database)
+	repo, err := users.NewMySQL(cfg.Database)
 	if err != nil {
 		os.Exit(ExitCodeFailCreateRepository)
 	}

@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/marcosstupnicki/go-users/internal/users"
-	"github.com/marcosstupnicki/go-users/internal/users/mysql"
-	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 	"net/http"
 	"strconv"
+
+	"github.com/marcosstupnicki/go-users/internal/users"
+	gowebapp "github.com/marcosstupnicki/go-webapp/pkg"
 )
 
 const (
@@ -64,7 +64,7 @@ func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.Service.Get(id)
 	if err != nil {
-		if err == mysql.ErrRecordNotFound {
+		if err == users.ErrRecordNotFound {
 			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
 			return
 		}
@@ -98,7 +98,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	user, err = h.Service.Update(id, user)
 	if err != nil {
-		if err == mysql.ErrRecordNotFound {
+		if err == users.ErrRecordNotFound {
 			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
@@ -123,7 +123,7 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Service.Delete(id)
 	if err != nil {
-		if err == mysql.ErrRecordNotFound {
+		if err == users.ErrRecordNotFound {
 			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
@@ -137,13 +137,13 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 func buildUserResponseFromUser(user users.User) users.UserResponse {
 	return users.UserResponse{
-		ID:        user.ID,
-		Email:     user.Email,
+		ID:    user.ID,
+		Email: user.Email,
 	}
 }
 
 func buildUserFromUserRequest(user users.UserRequest) users.User {
-	return users.User {
+	return users.User{
 		Email:    user.Email,
 		Password: user.Password,
 	}
