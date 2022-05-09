@@ -42,8 +42,8 @@ func (s Service) Create(user User) (User, error) {
 func (s Service) Get(id int) (User, error) {
 	user, err := s.repository.Get(id)
 	if err != nil {
-		if err == ErrRecordNotFound {
-			return User{}, ErrRecordNotFound
+		if err == ErrUserNotFound {
+			return User{}, ErrUserNotFound
 		}
 		return User{}, err
 	}
@@ -65,8 +65,8 @@ func (s Service) Update(id int, user User) (User, error) {
 
 	user, err := s.repository.Update(user)
 	if err != nil {
-		if err == ErrRecordNotFound {
-			return User{}, ErrRecordNotFound
+		if err == ErrUserNotFound {
+			return User{}, ErrUserNotFound
 		}
 		return User{}, err
 	}
@@ -77,8 +77,8 @@ func (s Service) Update(id int, user User) (User, error) {
 func (s Service) Delete(id int) error {
 	err := s.repository.Delete(id)
 	if err != nil {
-		if err == ErrRecordNotFound {
-			return ErrRecordNotFound
+		if err == ErrUserNotFound {
+			return ErrUserNotFound
 		}
 		return err
 	}

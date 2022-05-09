@@ -50,7 +50,7 @@ func initRoutes(app *gowebapp.WebApp, service users.Service) {
 	userHandler := handlers.NewHandler(service)
 
 	userGroup := app.Group("/users")
-	userGroup.Post("/", userHandler.Create)
+	userGroup.Post("", userHandler.Create)
 	userGroup.Get("/{id}", userHandler.Get)
 	userGroup.Put("/{id}", userHandler.Update)
 	userGroup.Delete("/{id}", userHandler.Delete)

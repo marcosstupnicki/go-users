@@ -116,10 +116,10 @@ func TestService_Get(t *testing.T) {
 			name: "Fail - User not found",
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Get", mock.Anything).Return(User{}, ErrRecordNotFound)
+				m.On("Get", mock.Anything).Return(User{}, ErrUserNotFound)
 				return &m
 			}(),
-			expectedError: ErrRecordNotFound,
+			expectedError: ErrUserNotFound,
 		},
 		{
 			name: "Fail - Internal error",
@@ -178,10 +178,10 @@ func TestService_Update(t *testing.T) {
 			id:   1,
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Update", mock.Anything).Return(User{}, ErrRecordNotFound)
+				m.On("Update", mock.Anything).Return(User{}, ErrUserNotFound)
 				return &m
 			}(),
-			expectedError: ErrRecordNotFound,
+			expectedError: ErrUserNotFound,
 		},
 		{
 			name: "Fail - Internal error",
@@ -229,10 +229,10 @@ func TestService_Delete(t *testing.T) {
 			name: "Fail - User not found",
 			repo: func() *RepositoryMock {
 				m := RepositoryMock{}
-				m.On("Delete", mock.Anything).Return(ErrRecordNotFound)
+				m.On("Delete", mock.Anything).Return(ErrUserNotFound)
 				return &m
 			}(),
-			expectedError: ErrRecordNotFound,
+			expectedError: ErrUserNotFound,
 		},
 		{
 			name: "Fail - Internal error",

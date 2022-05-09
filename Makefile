@@ -12,7 +12,7 @@ help:   ## show this help
 	@echo 'targets:'
 	@egrep '^(.+)\:\ .*##\ (.+)' ${MAKEFILE_LIST} | sed 's/:.*##/#/' | column -t -c 2 -s '#'
 
-test:
+tests:
 	echo "Executing tests"
 	go test ./...
 
