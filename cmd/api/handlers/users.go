@@ -64,8 +64,8 @@ func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.Service.Get(id)
 	if err != nil {
-		if err == users.ErrRecordNotFound {
-			gowebapp.RespondWithError(w, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+		if err == users.ErrUserNotFound {
+			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
 		gowebapp.RespondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
@@ -98,7 +98,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	user, err = h.Service.Update(id, user)
 	if err != nil {
-		if err == users.ErrRecordNotFound {
+		if err == users.ErrUserNotFound {
 			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}
@@ -123,7 +123,7 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Service.Delete(id)
 	if err != nil {
-		if err == users.ErrRecordNotFound {
+		if err == users.ErrUserNotFound {
 			gowebapp.RespondWithError(w, http.StatusNotFound, _ErrorMessageUserNotFound)
 			return
 		}

@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	// ErrRecordNotFound record not found error
-	ErrRecordNotFound = errors.New("record not found error")
+	// ErrUserNotFound record not found error
+	ErrUserNotFound = errors.New("user not found")
 )
 
 type MySQL struct {
@@ -46,7 +46,7 @@ func (repository MySQL) Get(id int) (User, error) {
 	tx := repository.DB.First(&user)
 
 	if tx.RowsAffected == 0 {
-		return User{}, ErrRecordNotFound
+		return User{}, ErrUserNotFound
 	}
 	if tx.Error != nil {
 		return User{}, tx.Error
@@ -58,7 +58,7 @@ func (repository MySQL) Get(id int) (User, error) {
 func (repository MySQL) Update(user User) (User, error) {
 	tx := repository.DB.Model(&user).Updates(user)
 	if tx.RowsAffected == 0 {
-		return User{}, ErrRecordNotFound
+		return User{}, ErrUserNotFound
 	}
 	if tx.Error != nil {
 		return User{}, tx.Error
@@ -72,7 +72,7 @@ func (repository MySQL) Delete(id int) error {
 
 	tx := repository.DB.Delete(&user)
 	if tx.RowsAffected == 0 {
-		return ErrRecordNotFound
+		return ErrUserNotFound
 	}
 
 	if tx.Error != nil {
