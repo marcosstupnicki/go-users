@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Added test cases for users handlers. [#8](https://github.com/marcosstupnicki/go-users/pull/8)
+- Added test case to internal service. Decouple db structure. [#7](https://github.com/marcosstupnicki/go-users/pull/7)
+- Added test case to configs. Minor structure refactor. [#6](https://github.com/marcosstupnicki/go-users/pull/6)
 - Minor refactor following Package Oriented Design. Dependency Injection. [#5](https://github.com/marcosstupnicki/go-users/pull/5)
 - Use bcrypt to hash user password. [#4](https://github.com/marcosstupnicki/go-users/pull/4)
 - Added functionality to load configurations from a struct. [#3](https://github.com/marcosstupnicki/go-users/pull/3)
