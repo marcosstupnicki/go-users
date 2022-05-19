@@ -1,8 +1,6 @@
 package users
 
 import (
-	"log"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -90,7 +88,6 @@ func generatePassword(plainPassword string) (string, error) {
 	// Generate "hash" to mysql from user password.
 	hash, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcrypt.DefaultCost)
 	if err != nil {
-		log.Fatal(err)
 		return "", err
 	}
 

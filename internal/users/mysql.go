@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	// ErrUserNotFound record not found error
+	// ErrUserNotFound users not found error
 	ErrUserNotFound = errors.New("user not found")
 )
 
@@ -71,13 +71,14 @@ func (repository MySQL) Delete(id int) error {
 	user := User{ID: id}
 
 	tx := repository.DB.Delete(&user)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
 	if tx.RowsAffected == 0 {
 		return ErrUserNotFound
 	}
 
-	if tx.Error != nil {
-		return tx.Error
-	}
 
 	return nil
 }

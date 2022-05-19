@@ -1,4 +1,4 @@
-.PHONY: help fmt lint test test-cover all
+.PHONY: help fmt lint tests all
 
 # Basic Makefile for Golang project
 # Includes GRPC Gateway, Protocol Buffers
@@ -12,15 +12,19 @@ help:   ## show this help
 	@echo 'targets:'
 	@egrep '^(.+)\:\ .*##\ (.+)' ${MAKEFILE_LIST} | sed 's/:.*##/#/' | column -t -c 2 -s '#'
 
-tests:
+tests:  ## execute the go source tests.
 	echo "Executing tests"
 	go test ./...
 
-fmt:    ## format the go source files
-	echo "Formating tests"
+coverage:  ## execute the go source tests with code coverage info.
+	echo "Executing tests with coverage"
+	go test -coverprofile=coverage.out ./... ;    go tool cover -html=coverage.out
+
+fmt:  ## format the go source files.
+	echo "Formatting files"
 	go fmt ./...
 	goimports -w $(FILES)
 
-tools:  ## fetch and install all required tools
+tools:  ## fetch and install all required tools.
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
